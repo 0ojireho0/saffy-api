@@ -19,12 +19,10 @@ Route::middleware(['auth:sanctum'])->group(function(){
     Route::get('/admin/stories', [AdminStoriesController::class, 'index']);
     Route::delete('/admin/stories/{id}', [AdminStoriesController::class, 'destroy']);
 
-
-    // Client
-    Route::get('/client/stories', [ClientStoriesController::class, 'index']);
-
-
 });
+
+// Client
+Route::get('/client/stories', [ClientStoriesController::class, 'index']);
 
 Route::get('/test', function(){
     return "hello";
