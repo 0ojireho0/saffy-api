@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Stories;
 use Illuminate\Support\Facades\Storage;
+use Vinkla\Hashids\Facades\Hashids;
 
 class AdminStoriesController extends Controller
 {
@@ -51,7 +52,8 @@ class AdminStoriesController extends Controller
 
     public function destroy($id)
     {
-        $story = Stories::find($id);
+        $decodedId = HashIds::decode($id)[0] ?? null;
+        $story = Stories::find($decodedId);
 
         if (!$story) {
             return response()->json([
@@ -71,4 +73,88 @@ class AdminStoriesController extends Controller
             'message' => 'Story deleted successfully'
         ]);
     }
+
+    public function validateStory(Request $request){
+
+
+        $decodedId = Hashids::decode($request->id)[0] ?? null;
+
+        $findStory = Stories::where('id', $decodedId)->first();
+
+        if(!$findStory){
+            return response()->json([
+                'error' => "Cannot find selected story"
+            ], 404);
+        }
+
+        return response()->json([
+            'content' => $findStory
+        ], 200);
+    }
+
+    public function update(Request $request, $id)
+    {
+
+
+        $request->validate([
+            'author' => 'nullable|string',
+            'category' => 'nullable|in:news,stories',
+            'content' => 'nullable|string',
+            'date' => 'nullable|date',
+            'timeRange' => 'nullable|string',
+            'title' => 'nullable|string',
+            'image' => 'nullable|image',
+        ]);
+
+
+        $decodedId = HashIds::decode($id)[0] ?? null;
+        $story = Stories::findOrFail($decodedId);
+
+        // Update only provided fields
+        if ($request->filled('category')) {
+            $story->type = $request->category;
+        }
+
+        if ($request->filled('title')) {
+            $story->title = $request->title;
+        }
+
+        if ($request->filled('author')) {
+            $story->author = $request->author;
+        }
+
+        if ($request->filled('date')) {
+            $story->publish_date = $request->date;
+        }
+
+        if ($request->filled('timeRange')) {
+            $story->reading_time = $request->timeRange;
+        }
+
+        if ($request->filled('content')) {
+            $story->content = $request->content;
+        }
+
+        // Handle image only if new one uploaded
+        if ($request->hasFile('image')) {
+            // Delete old image
+            if ($story->publication_image_path) {
+                Storage::disk('public')->delete($story->publication_image_path);
+            }
+
+            // Store new image
+            $file = $request->file('image');
+            $path = $file->store('Stories', 'public');
+            $story->publication_image_path = $path;
+        }
+
+        $story->save();
+
+        return response()->json([
+            'message' => 'Story updated successfully',
+            'story' => $story
+        ]);
+    }
+
+
 }

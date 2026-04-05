@@ -18,11 +18,13 @@ Route::middleware(['auth:sanctum'])->group(function(){
     Route::post('/admin/stories/add', [AdminStoriesController::class, 'addStories']);
     Route::get('/admin/stories', [AdminStoriesController::class, 'index']);
     Route::delete('/admin/stories/{id}', [AdminStoriesController::class, 'destroy']);
+    Route::post('/admin/stories/{id}', [AdminStoriesController::class, 'update']);
 
 });
 
 // Client
 Route::get('/client/stories', [ClientStoriesController::class, 'index']);
+Route::get('/validate-story', [AdminStoriesController::class, 'validateStory']);
 
 Route::get('/test', function(){
     return "hello";
