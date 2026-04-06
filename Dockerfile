@@ -2,25 +2,33 @@ FROM php:8.2-cli
 
 RUN apt-get update && apt-get install -y \
     git \
-    unzip \
     curl \
+    unzip \
     zip \
-    libzip-dev \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
-    && docker-php-ext-install pdo_mysql mbstring bcmath \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    libzip-dev \
+    libsodium-dev \
+    libpq-dev \
+    default-mysql-client \
+    default-libmysqlclient-dev \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip sodium
 
-WORKDIR /app
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash && \
+    apt-get update && apt-get install -y nodejs
 
-COPY . /app
+WORKDIR /var/www/html
+
+COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
 
-EXPOSE 8080
+EXPOSE 8000
 
-CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
+CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
