@@ -26,6 +26,11 @@ Route::middleware(['auth:sanctum'])->group(function(){
 Route::get('/client/stories', [ClientStoriesController::class, 'index']);
 Route::get('/validate-story', [AdminStoriesController::class, 'validateStory']);
 
+Route::get('/session-test', function (Request $request) {
+    $request->session()->put('test', 'hello');
+    return $request->session()->get('test');
+});
+
 Route::get('/test', function(){
     return "hello";
 });
