@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminStoriesController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Client\ClientStoriesController;
 
 
@@ -19,6 +20,9 @@ Route::middleware(['auth:sanctum'])->group(function(){
     Route::get('/admin/stories', [AdminStoriesController::class, 'index']);
     Route::delete('/admin/stories/{id}', [AdminStoriesController::class, 'destroy']);
     Route::post('/admin/stories/{id}', [AdminStoriesController::class, 'update']);
+    Route::put('/admin/update-user', [AuthenticatedSessionController::class, 'updatePassword']);
+
+
 
 });
 
