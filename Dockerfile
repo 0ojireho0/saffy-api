@@ -27,7 +27,7 @@ WORKDIR /var/www/html
 
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader && php artisan storage:link
 
 EXPOSE 8000
 
