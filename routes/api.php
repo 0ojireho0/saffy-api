@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminStoriesController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Client\ClientStoriesController;
+use App\Http\Controllers\Client\ContactUsController;
 
 
 
@@ -29,6 +30,7 @@ Route::middleware(['auth:sanctum'])->group(function(){
 // Client
 Route::get('/client/stories', [ClientStoriesController::class, 'index']);
 Route::get('/validate-story', [AdminStoriesController::class, 'validateStory']);
+Route::post('/contact-us', [ContactUsController::class, 'submitContactForm']);
 
 Route::get('/test', function(){
     return "hello";
