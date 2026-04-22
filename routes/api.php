@@ -33,5 +33,5 @@ Route::get('/validate-story', [AdminStoriesController::class, 'validateStory']);
 Route::post('/contact-us', [ContactUsController::class, 'submitContactForm']);
 
 Route::get('/test', function(){
-    return "hello";
+    return "hello test only";
 });
