@@ -11,21 +11,10 @@ use Vinkla\Hashids\Facades\Hashids;
 class AdminStoriesController extends Controller
 {
 
-    public function index()
-    {
-        $stories = Stories::orderBy('id', 'desc')->get();
-
-        $stories->transform(function ($story) {
-            $story->publication_image_url = Storage::disk('s3')->temporaryUrl(
-                $story->publication_image_path,
-                now()->addMinutes(30)
-            );
-
-            return $story;
-        });
-
-        return $stories;
+    public function index(){
+        return Stories::orderBy('id', 'desc')->get();
     }
+
 
 
     public function addStories(Request $request)
@@ -41,9 +30,8 @@ class AdminStoriesController extends Controller
         ]);
 
         $file = $request->file('image');
-        $path = $file->store('Stories', 's3');
 
-        $url = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(30));
+        $path = $file->store('Stories', 'public');
 
         Stories::create([
             'type' => $request->category,
@@ -58,32 +46,27 @@ class AdminStoriesController extends Controller
         return response()->json([
             'message' => 'Story created successfully.',
             'path' => $path,
-            'url' => $url,
+            'url' => asset('storage/' . $path),
         ]);
     }
 
     public function destroy($id)
     {
         $decodedId = HashIds::decode($id)[0] ?? null;
-
-        if (! $decodedId) {
-            return response()->json([
-                'message' => 'Invalid story ID'
-            ], 400);
-        }
-
         $story = Stories::find($decodedId);
 
-        if (! $story) {
+        if (!$story) {
             return response()->json([
                 'message' => 'Story not found'
             ], 404);
         }
 
-        if ($story->publication_image_path && Storage::disk('s3')->exists($story->publication_image_path)) {
-            Storage::disk('s3')->delete($story->publication_image_path);
+        // Delete image from storage
+        if ($story->publication_image_path) {
+            Storage::disk('public')->delete($story->publication_image_path);
         }
 
+        // Delete database record
         $story->delete();
 
         return response()->json([
@@ -91,38 +74,28 @@ class AdminStoriesController extends Controller
         ]);
     }
 
-    public function validateStory(Request $request)
-    {
-        $decodedId = Hashids::decode($request->id)[0] ?? null;
+    public function validateStory(Request $request){
 
-        if (! $decodedId) {
-            return response()->json([
-                'error' => 'Invalid story ID',
-            ], 400);
-        }
+
+        $decodedId = Hashids::decode($request->id)[0] ?? null;
 
         $findStory = Stories::where('id', $decodedId)->first();
 
-        if (! $findStory) {
+        if(!$findStory){
             return response()->json([
-                'error' => 'Cannot find selected story',
+                'error' => "Cannot find selected story"
             ], 404);
         }
 
-        $findStory->publication_image_url = $findStory->publication_image_path
-            ? Storage::disk('s3')->temporaryUrl(
-                $findStory->publication_image_path,
-                now()->addMinutes(30)
-            )
-            : null;
-
         return response()->json([
-            'content' => $findStory,
+            'content' => $findStory
         ], 200);
     }
 
     public function update(Request $request, $id)
     {
+
+
         $request->validate([
             'author' => 'nullable|string',
             'category' => 'nullable|in:news,stories',
@@ -133,22 +106,11 @@ class AdminStoriesController extends Controller
             'image' => 'nullable|image',
         ]);
 
+
         $decodedId = HashIds::decode($id)[0] ?? null;
+        $story = Stories::findOrFail($decodedId);
 
-        if (! $decodedId) {
-            return response()->json([
-                'message' => 'Invalid story ID'
-            ], 400);
-        }
-
-        $story = Stories::find($decodedId);
-
-        if (! $story) {
-            return response()->json([
-                'message' => 'Story not found'
-            ], 404);
-        }
-
+        // Update only provided fields
         if ($request->filled('category')) {
             $story->type = $request->category;
         }
@@ -173,24 +135,20 @@ class AdminStoriesController extends Controller
             $story->content = $request->content;
         }
 
+        // Handle image only if new one uploaded
         if ($request->hasFile('image')) {
-            if ($story->publication_image_path && Storage::disk('s3')->exists($story->publication_image_path)) {
-                Storage::disk('s3')->delete($story->publication_image_path);
+            // Delete old image
+            if ($story->publication_image_path) {
+                Storage::disk('public')->delete($story->publication_image_path);
             }
 
+            // Store new image
             $file = $request->file('image');
-            $path = $file->store('Stories', 's3');
+            $path = $file->store('Stories', 'public');
             $story->publication_image_path = $path;
         }
 
         $story->save();
-
-        $story->publication_image_url = $story->publication_image_path
-            ? Storage::disk('s3')->temporaryUrl(
-                $story->publication_image_path,
-                now()->addMinutes(30)
-            )
-            : null;
 
         return response()->json([
             'message' => 'Story updated successfully',
