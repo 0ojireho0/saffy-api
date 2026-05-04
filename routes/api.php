@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminStoriesController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Client\ClientStoriesController;
 use App\Http\Controllers\Client\ContactUsController;
+use App\Http\Controllers\Admin\AdminGalleriesController;
 
 
 
@@ -22,6 +23,11 @@ Route::middleware(['auth:sanctum'])->group(function(){
     Route::delete('/admin/stories/{id}', [AdminStoriesController::class, 'destroy']);
     Route::post('/admin/stories/{id}', [AdminStoriesController::class, 'update']);
     Route::put('/admin/update-user', [AuthenticatedSessionController::class, 'updatePassword']);
+
+    // Gallery Admin
+    Route::post('/admin/galleries/add', [AdminGalleriesController::class, 'store']);
+    Route::get('/admin/galleries/{search}', [AdminGalleriesController::class, 'index']);
+    Route::delete('/admin/galleries/delete/{id}', [AdminGalleriesController::class, 'delete']);
 
 
 
