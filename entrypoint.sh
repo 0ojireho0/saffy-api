@@ -2,6 +2,7 @@
 set -e
 
 mkdir -p /var/www/html/storage/app/public/Stories
+mkdir -p /var/www/html/storage/app/public/Gallery
 
 rm -f /var/www/html/public/storage || true
 php artisan storage:link || true
