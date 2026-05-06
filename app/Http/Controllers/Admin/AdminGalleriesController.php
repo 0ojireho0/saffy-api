@@ -75,7 +75,7 @@ class AdminGalleriesController extends Controller
 
         if (!$gallery) {
             return response()->json([
-                'message' => 'Story not found'
+                'message' => 'Product not found'
             ], 404);
         }
 
@@ -88,7 +88,49 @@ class AdminGalleriesController extends Controller
         $gallery->delete();
 
         return response()->json([
-            'message' => 'Story deleted successfully'
+            'message' => 'Product deleted successfully'
+        ]);
+
+    }
+
+    public function feature($id){
+
+        $decodedId = Hashids::decode($id)[0] ?? null;
+        $gallery = Gallery::find($decodedId);
+
+        if(!$gallery){
+            return response()->json([
+                'message' => 'Product not found'
+            ]);
+        }
+
+        $gallery->update([
+            'isFeatured' => 1
+        ]);
+
+        return response()->json([
+            'message' => 'Product featured successfully'
+        ]);
+
+    }
+
+    public function unfeature($id){
+
+        $decodedId = Hashids::decode($id)[0] ?? null;
+        $gallery = Gallery::find($decodedId);
+
+        if(!$gallery){
+            return response()->json([
+                'message' => 'Product not found'
+            ]);
+        }
+
+        $gallery->update([
+            'isFeatured' => 0
+        ]);
+
+        return response()->json([
+            'message' => 'Product unfeature successfully'
         ]);
 
     }

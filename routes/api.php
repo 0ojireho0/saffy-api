@@ -28,6 +28,8 @@ Route::middleware(['auth:sanctum'])->group(function(){
     Route::post('/admin/galleries/add', [AdminGalleriesController::class, 'store']);
     Route::get('/admin/galleries/{search}', [AdminGalleriesController::class, 'index']);
     Route::delete('/admin/galleries/delete/{id}', [AdminGalleriesController::class, 'delete']);
+    Route::put('/admin/galleries/feature/{id}', [AdminGalleriesController::class, 'feature']);
+    Route::put('/admin/galleries/unfeature/{id}', [AdminGalleriesController::class, 'unfeature']);
 
 
 

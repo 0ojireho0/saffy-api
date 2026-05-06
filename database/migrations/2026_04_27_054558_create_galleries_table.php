@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('size');
             $table->string('weight');
             $table->string('img_path');
+            $table->boolean('isFeatured')->default(0);
             $table->enum('category', ['featured','fashion','gifts','home','kitchen','stationaries','supported','christmas','toys']);
             $table->timestamps();
         });
