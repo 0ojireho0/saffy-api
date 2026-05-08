@@ -30,6 +30,7 @@ Route::middleware(['auth:sanctum'])->group(function(){
     Route::delete('/admin/galleries/delete/{id}', [AdminGalleriesController::class, 'delete']);
     Route::put('/admin/galleries/feature/{id}', [AdminGalleriesController::class, 'feature']);
     Route::put('/admin/galleries/unfeature/{id}', [AdminGalleriesController::class, 'unfeature']);
+    Route::post('/admin/galleries/{id}', [AdminGalleriesController::class, 'update']);
 
 
 
@@ -38,6 +39,7 @@ Route::middleware(['auth:sanctum'])->group(function(){
 // Client
 Route::get('/client/stories', [ClientStoriesController::class, 'index']);
 Route::get('/validate-story', [AdminStoriesController::class, 'validateStory']);
+Route::get('/validate-gallery', [AdminGalleriesController::class, 'validateGallery']);
 Route::post('/contact-us', [ContactUsController::class, 'submitContactForm']);
 
 Route::get('/test', function(){

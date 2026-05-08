@@ -134,4 +134,86 @@ class AdminGalleriesController extends Controller
         ]);
 
     }
+
+    public function validateGallery(Request $request){
+        $decodedId = Hashids::decode($request->id)[0] ?? null;
+
+        $findGallery = Gallery::where('id', $decodedId)->first();
+
+        if(!$findGallery){
+            return response()->json([
+                'error' => "Cannot find selected gallery"
+            ], 404);
+        }
+
+        return response()->json([
+            'content' => $findGallery
+        ], 200);
+    }
+
+    public function update(Request $request, $id){
+        $request->validate([
+            'color' => 'nullable|string',
+            'category' => 'nullable|in:fashion,gifts,home,kitchen,stationaries,supported,christmas,toys',
+            'description' => 'nullable|string',
+            'material' => 'nullable|string',
+            'product_id' => 'nullable|integer|unique:'.Gallery::class,
+            'shape' => 'nullable|string',
+            'size' => 'nullable|string',
+            'title' => 'nullable|string',
+            'weight' => 'nullable|string',
+            'image' => 'nullable|image',
+        ]);
+
+        $decodedId = HashIds::decode($id)[0] ?? null;
+        $gallery = Gallery::findOrFail($decodedId);
+
+        if ($request->filled('color')) {
+            $gallery->color = $request->color;
+        }
+        if ($request->filled('category')) {
+            $gallery->category = $request->category;
+        }
+        if ($request->filled('description')) {
+            $gallery->description = $request->description;
+        }
+        if ($request->filled('material')) {
+            $gallery->material = $request->material;
+        }
+        if ($request->filled('product_id')) {
+            $gallery->product_id = $request->product_id;
+        }
+        if ($request->filled('shape')) {
+            $gallery->shape = $request->shape;
+        }
+        if ($request->filled('size')) {
+            $gallery->size = $request->size;
+        }
+        if ($request->filled('title')) {
+            $gallery->title = $request->title;
+        }
+        if ($request->filled('weight')) {
+            $gallery->weight = $request->weight;
+        }
+        // Handle image only if new one uploaded
+        if ($request->hasFile('image')) {
+            // Delete old image
+            if ($gallery->img_path) {
+                Storage::disk('public')->delete($gallery->img_path);
+            }
+
+            // Store new image
+            $file = $request->file('image');
+            $path = $file->store('Gallery', 'public');
+            $gallery->img_path = $path;
+        }
+
+        $gallery->save();
+
+        return response()->json([
+            'message' => 'Gallery updated successfully',
+            'gallery' => $gallery
+        ]);
+
+    }
 }
