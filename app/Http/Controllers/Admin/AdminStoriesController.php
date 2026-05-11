@@ -74,6 +74,44 @@ class AdminStoriesController extends Controller
         ]);
     }
 
+    public function archive($id){
+        $decodedId = HashIds::decode($id)[0] ?? null;
+        $story = Stories::find($decodedId);
+
+        if (!$story) {
+            return response()->json([
+                'message' => 'Story not found'
+            ], 404);
+        }
+
+        $story->update([
+            'isArchive' => 1
+        ]);
+
+        return response()->json([
+            'message' => 'Story archive successfully'
+        ]);
+    }
+
+    public function unarchive($id){
+        $decodedId = HashIds::decode($id)[0] ?? null;
+        $story = Stories::find($decodedId);
+
+        if (!$story) {
+            return response()->json([
+                'message' => 'Story not found'
+            ], 404);
+        }
+
+        $story->update([
+            'isArchive' => 0
+        ]);
+
+        return response()->json([
+            'message' => 'Story restored successfully'
+        ]);
+    }
+
     public function validateStory(Request $request){
 
 

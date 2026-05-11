@@ -20,7 +20,8 @@ class Gallery extends Model
         'weight',
         'img_path',
         'category',
-        'isFeatured'
+        'isFeatured',
+        'isArchive'
 
     ];
 

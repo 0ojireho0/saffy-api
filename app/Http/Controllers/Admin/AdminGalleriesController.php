@@ -114,6 +114,44 @@ class AdminGalleriesController extends Controller
 
     }
 
+    public function archive($id){
+        $decodedId = Hashids::decode($id)[0] ?? null;
+        $gallery = Gallery::find($decodedId);
+
+        if(!$gallery){
+            return response()->json([
+                'message' => 'Product not found'
+            ]);
+        }
+
+        $gallery->update([
+            'isArchive' => 1
+        ]);
+
+        return response()->json([
+            'message' => 'Product archived successfully'
+        ]);
+    }
+
+    public function unarchive($id){
+        $decodedId = Hashids::decode($id)[0] ?? null;
+        $gallery = Gallery::find($decodedId);
+
+        if(!$gallery){
+            return response()->json([
+                'message' => 'Product not found'
+            ]);
+        }
+
+        $gallery->update([
+            'isArchive' => 0
+        ]);
+
+        return response()->json([
+            'message' => 'Product archived successfully'
+        ]);
+    }
+
     public function unfeature($id){
 
         $decodedId = Hashids::decode($id)[0] ?? null;

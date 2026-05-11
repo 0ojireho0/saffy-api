@@ -16,7 +16,8 @@ class Stories extends Model
         'publish_date',
         'reading_time',
         'publication_image_path',
-        'content'
+        'content',
+        'isArchive'
     ];
 
     public function getIdAttribute($value){

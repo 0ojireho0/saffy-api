@@ -21,6 +21,8 @@ Route::middleware(['auth:sanctum'])->group(function(){
     Route::post('/admin/stories/add', [AdminStoriesController::class, 'addStories']);
     Route::get('/admin/stories', [AdminStoriesController::class, 'index']);
     Route::delete('/admin/stories/{id}', [AdminStoriesController::class, 'destroy']);
+    Route::post('/admin/archive-stories/{id}', [AdminStoriesController::class, 'archive']);
+    Route::post('/admin/unarchive-stories/{id}', [AdminStoriesController::class, 'unarchive']);
     Route::post('/admin/stories/{id}', [AdminStoriesController::class, 'update']);
     Route::put('/admin/update-user', [AuthenticatedSessionController::class, 'updatePassword']);
 
@@ -31,6 +33,8 @@ Route::middleware(['auth:sanctum'])->group(function(){
     Route::put('/admin/galleries/feature/{id}', [AdminGalleriesController::class, 'feature']);
     Route::put('/admin/galleries/unfeature/{id}', [AdminGalleriesController::class, 'unfeature']);
     Route::post('/admin/galleries/{id}', [AdminGalleriesController::class, 'update']);
+    Route::put('/admin/archive-galleries/{id}', [AdminGalleriesController::class, 'archive']);
+    Route::put('/admin/unarchive-galleries/{id}', [AdminGalleriesController::class, 'unarchive']);
 
 
 
