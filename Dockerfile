@@ -25,6 +25,8 @@ RUN curl -sL https://deb.nodesource.com/setup_18.x | bash && \
 
 WORKDIR /var/www/html
 
+COPY docker/php/uploads.ini /usr/local/etc/php/conf.d/uploads.ini
+
 COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
