@@ -187,4 +187,58 @@ class ClientGalleriesController extends Controller
         }
     }
 
+    public function featuredGallery(){
+
+        $gallery = Gallery::where('isFeatured', 1)
+                        ->where('isArchive', 0)
+                        ->orderBy('id', 'desc')
+                        ->get();
+
+        $products = $gallery->map(function ($product){
+            $galleryId = $product->getRawOriginal('id');
+
+            $media = DB::table('gallery_media')
+                        ->where('gallery_id', $galleryId)
+                        ->orderByDesc('is_thumbnail')
+                        ->orderBy('id')
+                        ->get()
+                        ->map(function($item){
+                            return [
+                                'id' => $item->id,
+                                'media_path' => $item->media_path,
+                                'media_type' => $item->media_type,
+                                'is_thumbnail' => $item->is_thumbnail ?? 0,
+                                'media_url' => Storage::url($item->media_path)
+                            ];
+                        });
+            return [
+                    'id' => $product->id,
+                    'product_id' => $product->product_id,
+                    'title' => $product->title,
+                    'description' => $product->description,
+                    'material' => $product->material,
+                    'color' => $product->color,
+                    'shape' => $product->shape,
+                    'size' => $product->size,
+                    'weight' => $product->weight,
+                    'category' => $product->category,
+
+                    // Same shape as your frontend sample: { title, image }
+                    'image' => $product->img_path
+                        ? Storage::url($product->img_path)
+                        : null,
+
+                    // Full uploaded gallery media
+                    'media' => $media,
+            ];
+
+
+        });
+
+        return response()->json([
+            'products' => $products
+        ], 200);
+
+    }
+
 }

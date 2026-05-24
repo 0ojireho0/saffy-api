@@ -48,6 +48,7 @@ Route::get('/validate-gallery', [AdminGalleriesController::class, 'validateGalle
 Route::post('/contact-us', [ContactUsController::class, 'submitContactForm']);
 Route::get('/client/gallery', [ClientGalleriesController::class, 'index']);
 Route::get('/client/gallery/{category}', [ClientGalleriesController::class, 'getCategory']);
+Route::get('/client/featured-gallery', [ClientGalleriesController::class, 'featuredGallery']);
 
 
 
