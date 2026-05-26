@@ -48,7 +48,7 @@ class AdminGalleriesController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'product_id' => 'required|integer|unique:'.Gallery::class,
+            'product_id' => 'required|string|unique:'.Gallery::class,
             'title' => 'required|string',
             'description' => 'required|string',
             'material' => 'required|string',
