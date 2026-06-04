@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('product_id');
             $table->string('title');
-            $table->text('description');
-            $table->string('material');
-            $table->string('color');
-            $table->string('shape');
-            $table->string('size');
-            $table->string('weight');
+            $table->text('description')->nullable();
+            $table->string('material')->nullable();
+            $table->string('color')->nullable();
+            $table->string('shape')->nullable();
+            $table->string('size')->nullable();
+            $table->string('weight')->nullable();
             $table->string('img_path');
             $table->boolean('isFeatured')->default(0);
             $table->boolean('isArchive')->default(0);
