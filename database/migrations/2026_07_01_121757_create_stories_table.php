@@ -11,6 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+
+        if(Schema::hasTable('stories')){
+            return;
+        };
+
         Schema::create('stories', function (Blueprint $table) {
             $table->id();
             $table->enum('type', ['news', 'stories']);
